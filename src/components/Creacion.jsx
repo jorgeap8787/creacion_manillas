@@ -29,15 +29,25 @@ const Creacion = () => {
   };
 
   const Calcular = () => {
-  
     
+    let valor = 0;
+
+    if (moneda === 'Pesos') {
+      valor *= 5000; 
+    }
+
+    valor *= cantidad; 
+
+    setValorPagar(valor);
   };
 
   return (
     <div>
       <h1>CREACION MANILLAS</h1>
 
-      
+      <label>Cantidad:</label>
+      <input type="number" value={cantidad} onChange={CantidadCambio} />
+
       <br />
 
       <label>Material:</label>
@@ -75,6 +85,13 @@ const Creacion = () => {
         <option value="Pesos">Pesos</option>
       </select>
 
+      <br />
+
+      <button onClick={Calcular}>Calcular</button>
+
+      <br />
+
+      <p>Valor a pagar en {moneda}: {valorPagar}</p>
     </div>
   );
 };
