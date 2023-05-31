@@ -37,25 +37,44 @@ const Creacion = () => {
     <div>
       <h1>CREACION MANILLAS</h1>
 
+      
       <br />
+
       <label>Material:</label>
       <select value={material} onChange={MaterialCambio}>
+        <option value="">Selecciona un material</option>
+        <option value="Cuero">Cuero</option>
+        <option value="Cuerda">Cuerda</option>
       </select>
+
       <br />
 
       <label>Dije:</label>
       <select value={dije} onChange={DijeCambio}>
+        <option value="">Selecciona un dije</option>
+        <option value="Martillo">Martillo</option>
+        <option value="Ancla">Ancla</option>
       </select>
+
       <br />
 
       <label>Tipo:</label>
       <select value={tipo} onChange={TipoCambio}>
-     </select>
+        <option value="">Selecciona un tipo</option>
+        <option value="Oro">Oro</option>
+        <option value="Oro Rosado">Oro Rosado</option>
+        <option value="Plata">Plata</option>
+        <option value="Niquel">Niquel</option>
+      </select>
 
       <br />
+
       <label>Moneda:</label>
       <select value={moneda} onChange={MonedaCambio}>
-      </select> 
+        <option value="Dólares">Dólares</option>
+        <option value="Pesos">Pesos</option>
+      </select>
+
     </div>
   );
 };
