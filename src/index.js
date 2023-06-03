@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Creacion from './components/Creacion';
 import reportWebVitals from './reportWebVitals';
+//import Manillas from './components/Manillas';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

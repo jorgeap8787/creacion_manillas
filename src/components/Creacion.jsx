@@ -1,76 +1,81 @@
-import React, { useState } from 'react';
-
-
+import React, {useState, useEffect} from 'react'
 import { db } from '../firebase'
 import { collection, doc, addDoc, onSnapshot, deleteDoc, updateDoc } from 'firebase/firestore'
 
+
+
+
 const Creacion = () => {
-  const [cantidad, setCantidad] = useState(0);
+  const [cantidad, setCantidad] = useState([])
+  const [manillasDto, setManillasDto] = useState([])
   const [material, setMaterial] = useState('');
   const [dije, setDije] = useState('');
   const [tipo, setTipo] = useState('');
   const [moneda, setMoneda] = useState('Dólares');
-  const [valorPagar, setValorPagar] = useState(0);
+  const [valorPagar, setValorPagar] = useState("0");
+  const [valor, setValor] = useState("0");
 
-  const CantidadCambio = (event) => {
-    setCantidad(parseInt(event.target.value));
-  };
 
-  const MaterialCambio = (event) => {
-    setMaterial(event.target.value);
-  };
+  useEffect(()=>{
+    const obtenerDatos = async() =>{
+        try{
+            await onSnapshot(collection(db, 'manillas'), (query) =>{
+                setManillasDto(query.docs.map((doc)=>({...doc.data(), id:doc.id})))
+                console.log(manillasDto)
+            })
+        }catch(error){
+            console.log(error)
+        }
+    }
+    obtenerDatos();
+}, [])
 
-  const DijeCambio = (event) => {
-    setDije(event.target.value);
-  };
-
-  const TipoCambio = (event) => {
-    setTipo(event.target.value);
-  };
-
-  const MonedaCambio = (event) => {
-    setMoneda(event.target.value);
-  };
+ 
 
   const Calcular = () => {
- 
-    let valor = 0;
 
     
+    const  material = document.getElementById("inputGroupSelect01").value
+    const  dije = document.getElementById("inputGroupSelect02").value
+    const  tipo = document.getElementById("inputGroupSelect03").value
+    const  moneda = document.getElementById("inputGroupSelect04").value
+    const  cantidad = document.getElementById("cantidad").value
+    
+ 
 
+    
     if (material === 'Cuero' && dije === 'Martillo' && (tipo === 'Oro' || tipo === 'Oro Rosado')) {
-      valor = 100;
+      setValor ("100");
     } else if (material === 'Cuero' && dije === 'Martillo' && tipo === 'Plata') {
-      valor = 80;
+      setValor ("80");
     } else if (material === 'Cuero' && dije === 'Martillo' && tipo === 'Niquel') {
-      valor = 70;
+      setValor ("70");
     } else if (material === 'Cuero' && dije === 'Ancla' && (tipo === 'Oro' || tipo === 'Oro Rosado')) {
-      valor = 120;
+      setValor ("120");
     } else if (material === 'Cuero' && dije === 'Ancla' && tipo === 'Plata') {
-      valor = 100;
+      setValor ("100");
     } else if (material === 'Cuero' && dije === 'Ancla' && tipo === 'Niquel') {
-      valor = 90;
+      setValor ("90");
     } else if (material === 'Cuerda' && dije === 'Martillo' && (tipo === 'Oro' || tipo === 'Oro Rosado')) {
-      valor = 90;
+      setValor ("90");
     } else if (material === 'Cuerda' && dije === 'Martillo' && tipo === 'Plata') {
-      valor = 70;
+      setValor ("70");
     } else if (material === 'Cuerda' && dije === 'Martillo' && tipo === 'Niquel') {
-      valor = 50;
+      setValor ("50");
     } else if (material === 'Cuerda' && dije === 'Ancla' && (tipo === 'Oro' || tipo === 'Oro Rosado')) {
-      valor = 110;
+      setValor ("110");
     } else if (material === 'Cuerda' && dije === 'Ancla' && tipo === 'Plata') {
-      valor = 90;
+      setValor ("90");
     } else if (material === 'Cuerda' && dije === 'Ancla' && tipo === 'Niquel') {
-      valor = 80;
+      setValor ("80");
     }
 
     if (moneda === 'Pesos') {
-      valor *= 5000; 
+      setValorPagar (5000*valor*cantidad); 
     }
 
-    valor *= cantidad; 
 
-    setValorPagar(valor);
+    setValorPagar(valor*cantidad);
     
   };
 
@@ -79,36 +84,63 @@ const Creacion = () => {
       <h1 style={{ color: 'blue' }}>CREACION MANILLAS</h1>
 
       <br style={{ marginBottom: '1cm' }} />
+     
 
-      <label><h5>Cantidad:</h5></label>
-      <input type="number" value={cantidad} onChange={CantidadCambio} />
+      {<div className='row'>
+            <div className="col-10">
+                <h4 className="text-center"></h4>
+                <table className='table'>
+                    <thead class="thead-dark">
+                        <tr>
+                        <th scope="col">Material</th>
+                        <th scope="col">Dije</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {  
+                            manillasDto.map(item =>(
+                                <tr key={item.id}>                                    
+                                    <td>{item.material}</td>
+                                    <td>{item.dije}</td>
+                                    <td>{item.tipo}</td>
+                                    <td>{item.valor}</td>                                    
+                                </tr>
+                            ))   
+                        }
 
-      <br />
+                    </tbody>
+                </table>
+            </div>
+        </div>}
+
 
 
       <br style={{ marginBottom: '1cm' }} />
 
-      <label><h5>Material:</h5></label>
-      <select value={material} onChange={MaterialCambio} style={{ marginLeft: '1rem' }}>
-        <option value="">Selecciona un material</option>
+
+      <label for="inputGroupSelect01"><h5>Material:</h5></label>
+      <select id="inputGroupSelect01" style={{ marginLeft: '1rem' }} onChange={()=>Calcular()}>
+        <option selected>Selecciona.</option>
         <option value="Cuero">Cuero</option>
         <option value="Cuerda">Cuerda</option>
       </select>
 
       <br />
 
-      <label><h5>Dije:</h5></label>
-      <select value={dije} onChange={DijeCambio} style={{ marginLeft: '3.5rem' }}>
-        <option value="">Selecciona un dije</option>
+      <label for="inputGroupSelect02"><h5>Dije:</h5></label>
+      <select id="inputGroupSelect02"  style={{ marginLeft: '3.5rem' }} onChange={()=>Calcular()}>
+        <option value="">Selecciona.</option>
         <option value="Martillo">Martillo</option>
         <option value="Ancla">Ancla</option>
       </select>
 
       <br />
 
-      <label><h5>Tipo:</h5></label>
-      <select value={tipo}onChange={TipoCambio} style={{ marginLeft: '3.1rem' }}>
-        <option value="">Selecciona un tipo</option>
+      <label for="inputGroupSelect03"><h5>Tipo:</h5></label>
+      <select id="inputGroupSelect03" style={{ marginLeft: '3.1rem' }} onChange={()=>Calcular()}>
+        <option value="">Selecciona.</option>
         <option value="Oro">Oro</option>
         <option value="Oro Rosado">Oro Rosado</option>
         <option value="Plata">Plata</option>
@@ -117,20 +149,19 @@ const Creacion = () => {
 
       <br />
 
-      <label><h5>Moneda:</h5></label>
-      <select value={moneda} onChange={MonedaCambio} style={{ marginLeft: '1rem' }}>
+      <label for="inputGroupSelect04"><h5>Moneda:</h5></label>
+      <select id="inputGroupSelect04" style={{ marginLeft: '1rem' }} onChange={()=>Calcular()}>
         <option value="Dólares">Dólares</option>
         <option value="Pesos">Pesos</option>
       </select>
+      
+    <br />
+
+      <label><h5>Cantidad:</h5></label>
+
+      <input type="number" id="cantidad" onChange={()=>Calcular()} />
 
       <br />
-
-      <br style={{ marginBottom: '1cm' }} />
-
-      <button onClick={Calcular}>Calcular</button>
-
-      <br />
-
       <p style={{ color: 'blue' }}>Valor a pagar en {moneda}: {valorPagar}</p>
     </div>
   );
